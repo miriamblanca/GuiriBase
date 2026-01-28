@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GuiriBase - Living in Spain, simplified</title>
+  <meta name="description"
+    content="GuiriBase is your digital companion for moving to and living in Spain. Step-by-step guidance through real administrative processes.">
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --color-text: #1f2937;
+      --color-text-muted: #6b7280;
+      --color-bg: #ffffff;
+      --color-bg-subtle: #f9fafb;
+      --color-border: #e5e7eb;
+      --color-primary: #2563eb;
+      --color-primary-hover: #1d4ed8;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-family);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--color-text);
+      background-color: #1a1a2e;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+    }
+
+    /* Background Slideshow */
+    .slideshow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .slideshow::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.4) 100%);
+      z-index: 1;
+    }
+
+    .slideshow img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1.5s ease-in-out;
+    }
+
+    .slideshow img.active {
+      opacity: 1;
+    }
+
+    .container {
+      position: relative;
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      background-color: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      min-height: 100vh;
+      box-shadow: 0 0 60px rgba(0, 0, 0, 0.3);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .logo {
+      max-width: 180px;
+      width: 100%;
+      height: auto;
+      margin-bottom: 1.5rem;
+    }
+
+    .tagline {
+      font-size: 1.25rem;
+      color: var(--color-text-muted);
+      margin: 0;
+      font-weight: 400;
+    }
+
+    main {
+      margin-bottom: 3rem;
+    }
+
+    .marketing-text {
+      font-size: 1.125rem;
+      line-height: 1.75;
+      color: var(--color-text);
+      margin-bottom: 3rem;
+    }
+
+    .marketing-text p {
+      margin: 0 0 1.5rem 0;
+    }
+
+    .marketing-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Form Styles */
+    .signup-section {
+      background-color: var(--color-bg-subtle);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: 2rem;
+    }
+
+    .signup-section h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--color-text);
+      margin: 0 0 0.5rem 0;
+      text-align: center;
+    }
+
+    .signup-section .subtitle {
+      font-size: 1rem;
+      color: var(--color-text-muted);
+      margin: 0 0 1.5rem 0;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--color-text);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input[type="email"],
+    .form-group input[type="text"] {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      font-size: 1rem;
+      font-family: var(--font-family);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      background-color: #fff;
+      color: var(--color-text);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .form-group input::placeholder {
+      color: #9ca3af;
+    }
+
+    .form-group-checkbox {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group-checkbox input[type="checkbox"] {
+      width: 1.25rem;
+      height: 1.25rem;
+      margin: 0.125rem 0 0 0;
+      flex-shrink: 0;
+      accent-color: var(--color-primary);
+      cursor: pointer;
+    }
+
+    .form-group-checkbox label {
+      font-size: 0.875rem;
+      color: var(--color-text);
+      cursor: pointer;
+      line-height: 1.5;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: var(--font-family);
+      color: #fff;
+      background-color: var(--color-primary);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .submit-btn:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    .submit-btn:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+    }
+
+    .privacy-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background-color: #fff;
+      border-radius: 8px;
+      border: 1px solid var(--color-border);
+    }
+
+    .privacy-note svg {
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+
+    .privacy-note p {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .privacy-note a {
+      color: var(--color-primary);
+    }
+
+    .form-messages {
+      margin-bottom: 1rem;
+    }
+
+    .form-message {
+      display: none;
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+    }
+
+    .form-message.error {
+      background-color: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .form-message.success {
+      background-color: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .hidden-field {
+      position: absolute;
+      left: -9999px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      border-top: 1px solid var(--color-border);
+    }
+
+    footer p {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--color-text-muted);
+    }
+
+    @media (min-width: 640px) {
+      .container {
+        padding: 3rem 2rem;
+      }
+
+      .logo {
+        max-width: 220px;
+      }
+
+      .tagline {
+        font-size: 1.5rem;
+      }
+
+      .marketing-text {
+        font-size: 1.25rem;
+      }
+
+      .signup-section {
+        padding: 2.5rem;
+      }
+
+      .signup-section h2 {
+        font-size: 1.75rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Background Slideshow -->
+  <div class="slideshow">
+    <img src="spain-2499681_1280.jpg" alt="" class="active">
+    <img src="sea-6580562_1280.jpg" alt="">
+    <img src="windmills-4278679_1280.jpg" alt="">
+    <img src="beach-7347899_1920.jpg" alt="">
+  </div>
+
+  <div class="container">
+    <header>
+      <!-- Place logo.png in the same directory as index.html -->
+      <img src="logo.png" alt="GuiriBase logo" class="logo">
+      <p class="tagline">Moving to Spain, simplified.</p>
+    </header>
+
+    <main>
+      <div class="marketing-text">
+        <p>GuiriBase is your digital companion for moving to and living in Spain.<br>
+          It guides you step by step through real administrative processes—based on your situation—so you always know
+          what to do next, what you need, and why it matters.</p>
+
+        <p>Unlike chatbots or generic AI tools, GuiriBase is state-aware: it tracks your progress, respects legal
+          dependencies, blocks impossible steps, and uses human-validated, up-to-date rules. No guessing. No
+          hallucinations. Just clear, reliable guidance that actually works.</p>
+      </div>
+
+      <section class="signup-section">
+        <h2>Join the waitlist</h2>
+        <p class="subtitle">Subscribe to stay updated, get news and access to an early version.</p>
+
+        <div class="form-messages">
+          <div id="error-message" class="form-message error">
+            Your subscription could not be saved. Please try again.
+          </div>
+          <div id="success-message" class="form-message success">
+            Your subscription has been successful.
+          </div>
+        </div>
+
+        <form id="sib-form" method="POST"
+          action="https://db22e57b.sibforms.com/serve/MUIFALYO6mx3Lrizp6JEigGY-yrTrHkT9hJB4tUcT7ZVVnKeYuGh8r6FL7ak986qq_TZl1xGBHA_jc8oNJjSm1CzpYWWFoaqZpK8ElHSVM8U-VmHj_GxD4TIhEwlLpecyAk9HfA_d96JsMjKyANkogJ5hIeQkj14pjwxOPK4fvZLc2gF-s4jufZ-CEBwuId8uwBXfM6t1xFUKvPLYg=="
+          data-type="subscription">
+
+          <div class="form-group">
+            <label for="EMAIL">Email address</label>
+            <input type="email" id="EMAIL" name="EMAIL" placeholder="you@example.com" required>
+          </div>
+
+          <div class="form-group-checkbox">
+            <input type="checkbox" id="OPT_IN" name="OPT_IN" value="1" required>
+            <label for="OPT_IN">I agree to receive emails and accept the data privacy statement. You may unsubscribe at
+              any time.</label>
+          </div>
+
+          <button type="submit" class="submit-btn">Subscribe</button>
+
+          <!-- Honeypot field for spam protection -->
+          <input type="text" name="email_address_check" value="" class="hidden-field" tabindex="-1" autocomplete="off">
+          <input type="hidden" name="locale" value="en">
+        </form>
+
+        <div class="privacy-note">
+          <svg viewBox="0 0 63 63" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M31.54 0l1.05 3.06 3.385-.01-2.735 1.897 1.05 3.042-2.748-1.886-2.738 1.886 1.044-3.05-2.745-1.897h3.393zm13.97 3.019L46.555 6.4l3.384.01-2.743 2.101 1.048 3.387-2.752-2.1-2.752 2.1 1.054-3.382-2.745-2.105h3.385zm9.998 10.056l1.039 3.382h3.38l-2.751 2.1 1.05 3.382-2.744-2.091-2.743 2.091 1.054-3.381-2.754-2.1h3.385zM58.58 27.1l1.04 3.372h3.379l-2.752 2.096 1.05 3.387-2.744-2.091-2.75 2.092 1.054-3.387-2.747-2.097h3.376zm-3.076 14.02l1.044 3.364h3.385l-2.743 2.09 1.05 3.392-2.744-2.097-2.743 2.097 1.052-3.377-2.752-2.117 3.385-.01zm-9.985 9.91l1.045 3.364h3.393l-2.752 2.09 1.05 3.393-2.745-2.097-2.743 2.097 1.05-3.383-2.751-2.1 3.384-.01zM31.45 55.01l1.044 3.043 3.393-.008-2.752 1.9L34.19 63l-2.744-1.895-2.748 1.891 1.054-3.05-2.743-1.9h3.384zm-13.934-3.98l1.036 3.364h3.402l-2.752 2.09 1.053 3.393-2.747-2.097-2.752 2.097 1.053-3.382-2.743-2.1 3.384-.01zm-9.981-9.91l1.045 3.364h3.398l-2.748 2.09 1.05 3.392-2.753-2.1-2.752 2.096 1.053-3.382-2.743-2.102 3.384-.009zM4.466 27.1l1.038 3.372H8.88l-2.752 2.097 1.053 3.387-2.743-2.09-2.748 2.09 1.053-3.387L0 30.472h3.385zm3.069-14.025l1.045 3.382h3.395L9.23 18.56l1.05 3.381-2.752-2.09-2.752 2.09 1.053-3.381-2.744-2.1h3.384zm9.99-10.056L18.57 6.4l3.393.01-2.743 2.1 1.05 3.373-2.754-2.092-2.751 2.092 1.053-3.382-2.744-2.1h3.384zm24.938 19.394l-10-4.22a2.48 2.48 0 00-1.921 0l-10 4.22A2.529 2.529 0 0019 24.75c0 10.47 5.964 17.705 11.537 20.057a2.48 2.48 0 001.921 0C36.921 42.924 44 36.421 44 24.75a2.532 2.532 0 00-1.537-2.336zm-2.46 6.023l-9.583 9.705a.83.83 0 01-1.177 0l-5.416-5.485a.855.855 0 010-1.192l1.177-1.192a.83.83 0 011.177 0l3.65 3.697 7.819-7.916a.83.83 0 011.177 0l1.177 1.191a.843.843 0 010 1.192z"
+              fill="#0092FF" />
+          </svg>
+          <p>We use Brevo as our marketing platform. By submitting this form you agree that the personal data you
+            provided will be transferred to Brevo for processing in accordance with <a
+              href="https://www.brevo.com/en/legal/privacypolicy/" target="_blank" rel="noopener">Brevo's Privacy
+              Policy</a>.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 GuiriBase. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <!-- Slideshow Script -->
+  <script>
+    (function () {
+      const images = document.querySelectorAll('.slideshow img');
+      let current = 0;
+
+      function nextSlide() {
+        images[current].classList.remove('active');
+        current = (current + 1) % images.length;
+        images[current].classList.add('active');
+      }
+
+      // Change slide every 5 seconds
+      setInterval(nextSlide, 5000);
+    })();
+  </script>
+
+  <!-- Form Script -->
+  <script>
+    document.getElementById('sib-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const submitBtn = form.querySelector('.submit-btn');
+      const errorMsg = document.getElementById('error-message');
+      const successMsg = document.getElementById('success-message');
+
+      // Hide any previous messages
+      errorMsg.style.display = 'none';
+      successMsg.style.display = 'none';
+
+      // Disable button during submission
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Subscribing...';
+
+      // Submit form data
+      fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        mode: 'no-cors'
+      })
+        .then(function () {
+          // Show success (no-cors means we can't read response, but submission likely worked)
+          successMsg.style.display = 'block';
+          form.reset();
+        })
+        .catch(function () {
+          errorMsg.style.display = 'block';
+        })
+        .finally(function () {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Subscribe';
+        });
+    });
+  </script>
+</body>
+
+</html>
